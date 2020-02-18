@@ -68,7 +68,29 @@ mobs:register_mob("mobs_walrus:walrus", {
 	fly_in = "default:water_source",
 })
 
-mobs:register_spawn("mobs_walrus:walrus", {"default:dirt_with_snow", "default:snowblock", "default:ice"}, 20, 0, 300000, 1, 5000)
+local l_spawn_enabled_walrus = minetest.settings:get_bool("mobs_walrus.spawn_enabled_walrus", true)
+if l_spawn_enabled_walrus then
+
+
+local function CSVtoTable(str) --[[
+    parses comma separated string into an ordered table of strings
+    whitespace will be trimmed from strings ]]
+    if str == nil then return nil end
+    local ret = {}
+    for item in string.gmatch( str, "([^,%s]+)" ) do table.insert(ret, item) end
+    if table.getn(ret) == 0 then return nil end
+    return ret
+end
+    
+local l_spawn_on_walrus = CSVtoTable(minetest.settings:get("mobs_walrus.spawn_on_walrus")) or {"default:dirt_with_snow", "default:snowblock", "default:ice"}
+local l_spawn_min_light_walrus = minetest.settings:get("mobs_walrus.spawn_min_light_walrus") or 0
+local l_spawn_max_light_walrus = minetest.settings:get("mobs_walrus.spawn_max_light_walrus") or 20
+local l_spawn_chance_walrus = minetest.settings:get("mobs_walrus.spawn_chance_walrus") or 300000
+local l_spawn_active_object_count_walrus = minetest.settings:get("mobs_walrus.spawn_active_object_count_walrus") or 1
+local l_spawn_max_height_walrus = minetest.settings:get("mobs_walrus.spawn_max_height_walrus") or 5000
+    
+mobs:register_spawn("mobs_walrus:walrus", l_spawn_on_walrus, l_spawn_max_light_walrus, l_spawn_min_light_walrus, l_spawn_chance_walrus, l_spawn_active_object_count_walrus, l_spawn_max_height_walrus)
+end
 mobs:register_egg("mobs_walrus:walrus", "Walrus", "default_grass.png", 1)
 
 minetest.register_alias_force("arctic_life:walrus", "mobs_walrus:walrus")

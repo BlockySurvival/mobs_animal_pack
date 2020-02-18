@@ -101,14 +101,42 @@ mobs:register_mob("mobs_bear:medved", {
 	end
 })
 
-local l_spawn_elevation_min = (minetest.setting_get("water_level") or 0) - 10
+local l_spawn_enabled_bear = minetest.settings:get_bool("mobs_bear.spawn_enabled_bear", true)
+if l_spawn_enabled_bear then
+
+local function CSVtoTable(str) --[[
+    parses comma separated string into an ordered table of strings
+    whitespace will be trimmed from strings ]]
+    if str == nil then return nil end
+    local ret = {}
+    for item in string.gmatch( str, "([^,%s]+)" ) do table.insert(ret, item) end
+    if table.getn(ret) == 0 then return nil end
+    return ret
+end
+    
+local water_level = minetest.setting_get("water_level") or 0
+local l_spawn_on_bear = CSVtoTable(minetest.settings:get("mobs_bear.spawn_on_bear")) or {"default:dirt_with_grass", "ethereal:green_dirt_top"}
+local l_spawn_near_bear = CSVtoTable(minetest.settings:get("mobs_bear.spawn_near_bear")) or nil
+local l_spawn_min_light_bear = minetest.settings:get("mobs_bear.spawn_min_light_bear") or 10
+local l_spawn_max_light_bear = minetest.settings:get("mobs_bear.spawn_max_light_bear") or nil
+local l_spawn_interval_bear = minetest.settings:get("mobs_bear.spawn_interval_bear") or nil
+local l_spawn_chance_bear = minetest.settings:get("mobs_bear.spawn_chance_bear") or 300000
+local l_spawn_active_object_count_bear = minetest.settings:get("mobs_bear.spawn_active_object_count_bear") or nil
+local l_spawn_min_height_bear = minetest.settings:get("mobs_bear.spawn_min_height_bear") or water_level - 10
+local l_spawn_max_height_bear = minetest.settings:get("mobs_bear.spawn_max_height_bear") or 5000
+
 mobs:spawn({
 	name = "mobs_bear:medved",
-	nodes = {"default:dirt_with_grass", "ethereal:green_dirt_top"},
-	min_light = 10,
-	chance = 300000,
-	min_height = l_spawn_elevation_min,
-	max_height = 5000,
+	nodes = l_spawn_on_bear,
+	neighbors = l_spawn_near_bear,
+	min_light = l_spawn_min_light_bear,
+	max_light = l_spawn_max_light_bear,
+	chance = l_spawn_chance_bear,
+	interval = l_spawn_interval_bear,
+	active_object_count = l_spawn_active_object_count_bear,
+	min_height = l_spawn_min_height_bear,
+	max_height = l_spawn_max_height_bear,
 	day_toggle = true,
 })
+end
 mobs:register_egg("mobs_bear:medved", "Bear", "wool_brown.png", 1)

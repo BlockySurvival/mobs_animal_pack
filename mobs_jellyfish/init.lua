@@ -32,9 +32,32 @@ mobs:register_mob("mobs_jellyfish:jellyfish", {
 		mobs:capture_mob(self, clicker, 80, 100, 0, true, "mobs_jellyfish:jellyfish")
 	end
 })
+
+local l_spawn_enabled_jellyfish = minetest.settings:get_bool("mobs_jellyfish.spawn_enabled_jellyfish", true)
+if l_spawn_enabled_jellyfish then
+
+    
+local function CSVtoTable(str) --[[
+    parses comma separated string into an ordered table of strings
+    whitespace will be trimmed from strings ]]
+    if str == nil then return nil end
+    local ret = {}
+    for item in string.gmatch( str, "([^,%s]+)" ) do table.insert(ret, item) end
+    if table.getn(ret) == 0 then return nil end
+    return ret
+end
+
+local l_spawn_on_jellyfish = CSVtoTable(minetest.settings:get("mobs_jellyfish.spawn_on_jellyfish")) or {"default:water_source"}
+local l_spawn_near_jellyfish = CSVtoTable(minetest.settings:get("mobs_jellyfish.spawn_near_jellyfish")) or {"default:water_flowing","default:water_source"}
+local l_spawn_min_light_jellyfish = minetest.settings:get("mobs_jellyfish.spawn_min_light_jellyfish") or 1
+local l_spawn_max_light_jellyfish = minetest.settings:get("mobs_jellyfish.spawn_max_light_jellyfish") or 14
+local l_spawn_interval_jellyfish = minetest.settings:get("mobs_jellyfish.spawn_interval_jellyfish") or 30
+local l_spawn_chance_jellyfish = minetest.settings:get("mobs_jellyfish.spawn_chance_jellyfish") or 300000
+local l_spawn_active_object_count_jellyfish = minetest.settings:get("mobs_jellyfish.spawn_active_object_count_jellyfish") or 1
+local l_spawn_min_height_jellyfish = minetest.settings:get("mobs_jellyfish.spawn_min_height_jellyfish") or -50
+local l_spawn_max_height_jellyfish = minetest.settings:get("mobs_jellyfish.spawn_max_height_jellyfish") or -1
+
 --name, nodes, neighbours, minlight, maxlight, interval, chance, active_object_count, min_height, max_height
-mobs:spawn_specific("mobs_jellyfish:jellyfish",
-	{"default:water_source"},
-	{"default:water_flowing","default:water_source"},
-	1, 14, 30, 300000, 1, -50, -1)
+mobs:spawn_specific("mobs_jellyfish:jellyfish", l_spawn_on_jellyfish, l_spawn_near_jellyfish, l_spawn_min_light_jellyfish, l_spawn_max_light_jellyfish, l_spawn_interval_jellyfish, l_spawn_chance_jellyfish, l_spawn_active_object_count_jellyfish, l_spawn_min_height_jellyfish, l_spawn_max_height_jellyfish)
+end
 mobs:register_egg("mobs_jellyfish:jellyfish", "Jellyfish", "jellyfish_inv.png", 0)

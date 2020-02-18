@@ -61,23 +61,46 @@ mobs:register_mob("mobs_deer:deer", {
 	end
 })
 
-local l_spawn_elevation_min = minetest.setting_get("water_level")
-if l_spawn_elevation_min then
-	l_spawn_elevation_min = l_spawn_elevation_min + 1
-else
-	l_spawn_elevation_min = 1
+local l_spawn_enabled_deer = minetest.settings:get_bool("mobs_deer.spawn_enabled_deer", true)
+if l_spawn_enabled_deer then
+    
+local function CSVtoTable(str) --[[
+    parses comma separated string into an ordered table of strings
+    whitespace will be trimmed from strings ]]
+    if str == nil then return nil end
+    local ret = {}
+    for item in string.gmatch( str, "([^,%s]+)" ) do table.insert(ret, item) end
+    if table.getn(ret) == 0 then return nil end
+    return ret
 end
+    
+local water_level = minetest.setting_get("water_level") or 0
+local l_spawn_on_deer = CSVtoTable(minetest.settings:get("mobs_deer.spawn_on_deer")) or {
+	"default:dirt_with_grass",
+	"default:dirt_with_coniferous_litter",
+	"ethereal:green_dirt_top"
+}
+local l_spawn_near_deer = CSVtoTable(minetest.settings:get("mobs_deer.spawn_near_deer")) or nil
+local l_spawn_min_light_deer = minetest.settings:get("mobs_deer.spawn_min_light_deer") or 10
+local l_spawn_max_light_deer = minetest.settings:get("mobs_deer.spawn_max_light_deer") or nil
+local l_spawn_interval_deer = minetest.settings:get("mobs_deer.spawn_interval_deer") or nil
+local l_spawn_chance_deer = minetest.settings:get("mobs_deer.spawn_chance_deer") or 300000
+local l_spawn_active_object_count_deer = minetest.settings:get("mobs_deer.spawn_active_object_count_deer") or nil
+local l_spawn_min_height_deer = minetest.settings:get("mobs_deer.spawn_min_height_deer") or water_level + 1
+local l_spawn_max_height_deer = minetest.settings:get("mobs_deer.spawn_max_height_deer") or 5000
+
 mobs:spawn({
 	name = "mobs_deer:deer",
-	nodes = {
-		"default:dirt_with_grass",
-		"default:dirt_with_coniferous_litter",
-		"ethereal:green_dirt_top"
-	},
-	min_light = 10,
-	chance = 300000,
-	min_height = l_spawn_elevation_min,
-	max_height = 5000,
+	nodes = l_spawn_on_deer,
+	neighbors = l_spawn_near_deer,
+	min_light = l_spawn_min_light_deer,
+	max_light = l_spawn_max_light_deer,
+	chance = l_spawn_chance_deer,
+	interval = l_spawn_interval_deer,
+	active_object_count = l_spawn_active_object_count_deer,
+	min_height = l_spawn_min_height_deer,
+	max_height = l_spawn_max_height_deer,
 	day_toggle = true,
 })
+end
 mobs:register_egg("mobs_deer:deer", "Deer", "wool_violet.png", 1)

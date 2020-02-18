@@ -57,26 +57,50 @@ mobs:register_mob("mobs_wolf:wolf", {
 	end
 })
 
-local l_spawn_elevation_min = minetest.setting_get("water_level")
-if l_spawn_elevation_min then
-	l_spawn_elevation_min = l_spawn_elevation_min - 5
-else
-	l_spawn_elevation_min = -5
+local l_spawn_enabled_wolf = minetest.settings:get_bool("mobs_wolf.spawn_enabled_wolf", true)
+if l_spawn_enabled_wolf then
+
+    
+local function CSVtoTable(str) --[[
+    parses comma separated string into an ordered table of strings
+    whitespace will be trimmed from strings ]]
+    if str == nil then return nil end
+    local ret = {}
+    for item in string.gmatch( str, "([^,%s]+)" ) do table.insert(ret, item) end
+    if table.getn(ret) == 0 then return nil end
+    return ret
 end
+
+local water_level = minetest.setting_get("water_level") or 0
+local l_spawn_on_wolf = CSVtoTable(minetest.settings:get("mobs_wolf.spawn_on_wolf")) or {
+	"default:dirt_with_grass",
+	"default:dirt_with_snow",
+	"default:dirt_with_coniferous_litter",
+	"ethereal:green_dirt_top",
+}
+local l_spawn_near_wolf = CSVtoTable(minetest.settings:get("mobs_wolf.spawn_near_wolf")) or nil
+local l_spawn_min_light_wolf = minetest.settings:get("mobs_wolf.spawn_min_light_wolf") or 10
+local l_spawn_max_light_wolf = minetest.settings:get("mobs_wolf.spawn_max_light_wolf") or nil
+local l_spawn_interval_wolf = minetest.settings:get("mobs_wolf.spawn_interval_wolf") or nil
+local l_spawn_chance_wolf = minetest.settings:get("mobs_wolf.spawn_chance_wolf") or 300000
+local l_spawn_active_object_count_wolf = minetest.settings:get("mobs_wolf.spawn_active_object_count_wolf") or nil
+local l_spawn_min_height_wolf = minetest.settings:get("mobs_wolf.spawn_min_height_wolf") or water_level - 5
+local l_spawn_max_height_wolf = minetest.settings:get("mobs_wolf.spawn_max_height_wolf") or 5000
+
 mobs:spawn({
 	name = "mobs_wolf:wolf",
-	nodes = {
-		"default:dirt_with_grass",
-		"default:dirt_with_snow",
-		"default:dirt_with_coniferous_litter",
-		"ethereal:green_dirt_top",
-	},
-	min_light = 10,
-	chance = 300000,
-	min_height = l_spawn_elevation_min,
-	max_height = 5000,
+	nodes = l_spawn_on_wolf,
+	neighbors = l_spawn_near_wolf,
+	min_light = l_spawn_min_light_wolf,
+	max_light = l_spawn_max_light_wolf,
+	chance = l_spawn_chance_wolf,
+	interval = l_spawn_interval_wolf,
+	active_object_count = l_spawn_active_object_count_wolf,
+	min_height = l_spawn_min_height_wolf,
+	max_height = l_spawn_max_height_wolf,
 	day_toggle = true,
 })
+end
 mobs:register_egg("mobs_wolf:wolf", "Wolf", "wool_grey.png", 1)
 
 -- Dog

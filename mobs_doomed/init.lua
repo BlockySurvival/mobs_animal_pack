@@ -16,6 +16,16 @@ mobs_doomed.deepclone = function(t) -- deep-copy a table -- from https://gist.gi
 	return target
 end
 
+mobs_doomed.CSVtoTable = function (str) --[[
+    parses comma separated string into an ordered table of strings
+    whitespace will be trimmed from strings ]]
+    if str == nil then return nil end
+    local ret = {}
+    for item in string.gmatch( str, "([^,%s]+)" ) do table.insert(ret, item) end
+    if table.getn(ret) == 0 then return nil end
+    return ret
+end
+
 -- Start loading ----------------------------------------------------------------------------------
 
 local function loadmob(mobname,dir)

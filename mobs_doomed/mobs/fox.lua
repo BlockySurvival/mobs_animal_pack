@@ -67,12 +67,23 @@ mobs:register_mob("mobs_doomed:fox", {
 
 mobs:register_egg("mobs_doomed:fox", "Fox", "wool_orange.png", 1)
 
-mobs:spawn_specific("mobs_doomed:fox",
-					{
+local l_spawn_enabled_fox = minetest.settings:get_bool("mobs_doomed.spawn_enabled_fox", true)
+if l_spawn_enabled_fox then
+
+local l_spawn_on_fox = mobs_doomed.CSVtoTable(minetest.settings:get("mobs_doomed.spawn_on_fox")) or {
 						"default:dirt_with_grass",
 						"default:dirt",
 						"default:dirt_with_coniferous_litter",
 						"default:dirt_with_snow"
-					},
-					{"air"},
-                    0, 14, 30, 300000, 2, 0, 5000, nil)
+					}
+local l_spawn_near_fox = mobs_doomed.CSVtoTable(minetest.settings:get("mobs_doomed.spawn_near_fox")) or {"air"}
+local l_spawn_min_light_fox = minetest.settings:get("mobs_doomed.spawn_min_light_fox") or 0
+local l_spawn_max_light_fox = minetest.settings:get("mobs_doomed.spawn_max_light_fox") or 14
+local l_spawn_interval_fox = minetest.settings:get("mobs_doomed.spawn_interval_fox") or 30
+local l_spawn_chance_fox = minetest.settings:get("mobs_doomed.spawn_chance_fox") or 300000
+local l_spawn_active_object_count_fox = minetest.settings:get("mobs_doomed.spawn_active_object_count_fox") or 2
+local l_spawn_min_height_fox = minetest.settings:get("mobs_doomed.spawn_min_height_fox") or 0
+local l_spawn_max_height_fox = minetest.settings:get("mobs_doomed.spawn_max_height_fox") or 5000
+
+mobs:spawn_specific("mobs_doomed:fox", l_spawn_on_fox, l_spawn_near_fox, l_spawn_min_light_fox, l_spawn_max_light_fox, l_spawn_interval_fox, l_spawn_chance_fox, l_spawn_active_object_count_fox, l_spawn_min_height_fox, l_spawn_max_height_fox, nil)
+end

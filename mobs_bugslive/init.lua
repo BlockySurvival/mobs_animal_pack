@@ -63,9 +63,20 @@ mobs:register_mob("mobs_bugslive:bug", {
 	end
 })
 
---name, nodes, neighbors, min_light, max_light, interval, chance, active_object_count, min_height, max_height
-mobs:spawn_specific("mobs_bugslive:bug",
-	{
+local l_spawn_enabled_bug = minetest.settings:get_bool("mobs_bugslive.spawn_enabled_bug", true)
+if l_spawn_enabled_bug then
+    
+local function CSVtoTable(str) --[[
+    parses comma separated string into an ordered table of strings
+    whitespace will be trimmed from strings ]]
+    if str == nil then return nil end
+    local ret = {}
+    for item in string.gmatch( str, "([^,%s]+)" ) do table.insert(ret, item) end
+    if table.getn(ret) == 0 then return nil end
+    return ret
+end
+
+local l_spawn_on_bug = CSVtoTable(minetest.settings:get("mobs_bugslive.spawn_on_bug")) or {
 		"default:dirt",
 		"default:dirt_with_grass",
 		"default:dirt_with_coniferous_litter",
@@ -73,8 +84,17 @@ mobs:spawn_specific("mobs_bugslive:bug",
 		"default:dirt_with_rainforest_litter",
 		"default:stone",
 		"ethereal:green_dirt_top"
-	},
-	{"air", "default:water_source", "default:water_flowing", "default:river_water_source", "default:river_water_flowing"},
-	0, 15, 30, 300000, 2, -25000, 5000
-)
+	}
+local l_spawn_near_bug = CSVtoTable(minetest.settings:get("mobs_bugslive.spawn_near_bug")) or {"air", "default:water_source", "default:water_flowing", "default:river_water_source", "default:river_water_flowing"}
+local l_spawn_min_light_bug = minetest.settings:get("mobs_bugslive.spawn_min_light_bug") or 0
+local l_spawn_max_light_bug = minetest.settings:get("mobs_bugslive.spawn_max_light_bug") or 15
+local l_spawn_interval_bug = minetest.settings:get("mobs_bugslive.spawn_interval_bug") or 30
+local l_spawn_chance_bug = minetest.settings:get("mobs_bugslive.spawn_chance_bug") or 300000
+local l_spawn_active_object_count_bug = minetest.settings:get("mobs_bugslive.spawn_active_object_count_bug") or 2
+local l_spawn_min_height_bug = minetest.settings:get("mobs_bugslive.spawn_min_height_bug") or -25000
+local l_spawn_max_height_bug = minetest.settings:get("mobs_bugslive.spawn_max_height_bug") or 5000
+
+--name, nodes, neighbors, min_light, max_light, interval, chance, active_object_count, min_height, max_height
+mobs:spawn_specific("mobs_bugslive:bug", l_spawn_on_bug, l_spawn_near_bug, l_spawn_min_light_bug, l_spawn_max_light_bug, l_spawn_interval_bug, l_spawn_chance_bug, l_spawn_active_object_count_bug, l_spawn_min_height_bug, l_spawn_max_height_bug)
+end
 mobs:register_egg("mobs_bugslive:bug", "Bug", "inv_bug.png", 0)

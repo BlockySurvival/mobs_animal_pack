@@ -64,11 +64,22 @@ mobs:register_mob("mobs_doomed:badger", {
 
 mobs:register_egg("mobs_doomed:badger", "Badger", "default_obsidian.png", 1)
 
-mobs:spawn_specific("mobs_doomed:badger",
-				    {
+local l_spawn_enabled_badger = minetest.settings:get_bool("mobs_doomed.spawn_enabled_badger", true)
+if l_spawn_enabled_badger then
+
+local l_spawn_on_badger = mobs_doomed.CSVtoTable(minetest.settings:get("mobs_doomed.spawn_on_badger")) or {
 						"default:dirt_with_grass",
 						"default:dirt",
 						"default:dirt_with_coniferous_litter"
-					},
-				    {"air"},
-                    0, 14, 30, 300000, 2, 0, 5000)
+					}
+local l_spawn_near_badger = mobs_doomed.CSVtoTable(minetest.settings:get("mobs_doomed.spawn_near_badger")) or {"air"}
+local l_spawn_min_light_badger = minetest.settings:get("mobs_doomed.spawn_min_light_badger") or 0
+local l_spawn_max_light_badger = minetest.settings:get("mobs_doomed.spawn_max_light_badger") or 14
+local l_spawn_interval_badger = minetest.settings:get("mobs_doomed.spawn_interval_badger") or 30
+local l_spawn_chance_badger = minetest.settings:get("mobs_doomed.spawn_chance_badger") or 300000
+local l_spawn_active_object_count_badger = minetest.settings:get("mobs_doomed.spawn_active_object_count_badger") or 2
+local l_spawn_min_height_badger = minetest.settings:get("mobs_doomed.spawn_min_height_badger") or 0
+local l_spawn_max_height_badger = minetest.settings:get("mobs_doomed.spawn_max_height_badger") or 5000
+
+mobs:spawn_specific("mobs_doomed:badger", l_spawn_nodes_badger, l_spawn_near_badger, l_spawn_min_light_badger, l_spawn_max_light_badger, l_spawn_interval_badger, l_spawn_chance_badger, l_spawn_active_object_count_badger, l_spawn_min_height_badger, l_spawn_max_height_badger, nil)
+end

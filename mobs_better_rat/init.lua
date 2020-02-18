@@ -60,10 +60,30 @@ mobs:register_mob("mobs_better_rat:rat", {
 	end
 })
 
+local l_spawn_enabled_better_rat = minetest.settings:get_bool("mobs_better_rat.spawn_enabled_better_rat", true)
+if l_spawn_enabled_better_rat then
+    
+local function CSVtoTable(str) --[[
+    parses comma separated string into an ordered table of strings
+    whitespace will be trimmed from strings ]]
+    if str == nil then return nil end
+    local ret = {}
+    for item in string.gmatch( str, "([^,%s]+)" ) do table.insert(ret, item) end
+    if table.getn(ret) == 0 then return nil end
+    return ret
+end
+
+local l_spawn_on_better_rat = CSVtoTable(minetest.settings:get("mobs_better_rat.spawn_on_better_rat")) or {"default:stone"}
+local l_spawn_near_better_rat = CSVtoTable(minetest.settings:get("mobs_better_rat.spawn_near_better_rat")) or {"air"}
+local l_spawn_min_light_better_rat = minetest.settings:get("mobs_better_rat.spawn_min_light_better_rat") or 0
+local l_spawn_max_light_better_rat = minetest.settings:get("mobs_better_rat.spawn_max_light_better_rat") or 14
+local l_spawn_interval_better_rat = minetest.settings:get("mobs_better_rat.spawn_interval_better_rat") or 30
+local l_spawn_chance_better_rat = minetest.settings:get("mobs_better_rat.spawn_chance_better_rat") or 300000
+local l_spawn_active_object_count_better_rat = minetest.settings:get("mobs_better_rat.spawn_active_object_count_better_rat") or 2
+local l_spawn_min_height_better_rat = minetest.settings:get("mobs_better_rat.spawn_min_height_better_rat") or -25000
+local l_spawn_max_height_better_rat = minetest.settings:get("mobs_better_rat.spawn_max_height_better_rat") or 5000
+
 --name, nodes, neighbors, min_light, max_light, interval, chance, active_object_count, min_height, max_height
-mobs:spawn_specific("mobs_better_rat:rat",
-	{"default:stone"},
-	{"air"},
-	0, 14, 30, 300000, 2, -25000, 5000
-)
+mobs:spawn_specific("mobs_better_rat:rat", l_spawn_on_better_rat, l_spawn_near_better_rat, l_spawn_min_light_better_rat, l_spawn_max_light_better_rat, l_spawn_interval_better_rat, l_spawn_chance_better_rat, l_spawn_active_object_count_better_rat, l_spawn_min_height_better_rat, l_spawn_max_height_better_rat)
+end
 mobs:register_egg("mobs_better_rat:rat", "Mouse", "wool_brown.png", 1)

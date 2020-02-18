@@ -81,21 +81,46 @@ mobs:register_mob("mobs_mr_goat:goat", {
 	end
 })
 
-local l_spawn_elevation_min = minetest.setting_get("water_level")
-if l_spawn_elevation_min then
-	l_spawn_elevation_min = l_spawn_elevation_min + 1
-else
-	l_spawn_elevation_min = 1
+
+local l_spawn_enabled_goat = minetest.settings:get_bool("mobs_mr_goat.spawn_enabled_goat", true)
+if l_spawn_enabled_goat then
+    
+
+local function CSVtoTable(str) --[[
+    parses comma separated string into an ordered table of strings
+    whitespace will be trimmed from strings ]]
+    if str == nil then return nil end
+    local ret = {}
+    for item in string.gmatch( str, "([^,%s]+)" ) do table.insert(ret, item) end
+    if table.getn(ret) == 0 then return nil end
+    return ret
 end
+    
+local water_level = minetest.setting_get("water_level") or 0
+local l_spawn_on_goat = CSVtoTable(minetest.settings:get("mobs_mr_goat.spawn_on_goat")) or {"default:dirt_with_grass", "ethereal:green_dirt_top"}
+local l_spawn_near_goat = CSVtoTable(minetest.settings:get("mobs_mr_goat.spawn_near_goat")) or nil
+local l_spawn_min_light_goat = minetest.settings:get("mobs_mr_goat.spawn_min_light_goat") or 10
+local l_spawn_max_light_goat = minetest.settings:get("mobs_mr_goat.spawn_max_light_goat") or nil
+local l_spawn_interval_goat = minetest.settings:get("mobs_mr_goat.spawn_interval_goat") or nil
+local l_spawn_chance_goat = minetest.settings:get("mobs_mr_goat.spawn_chance_goat") or 300000
+local l_spawn_active_object_count_goat = minetest.settings:get("mobs_mr_goat.spawn_active_object_count_goat") or nil
+local l_spawn_min_height_goat = minetest.settings:get("mobs_mr_goat.spawn_min_height_goat") or water_level + 1
+local l_spawn_max_height_goat = minetest.settings:get("mobs_mr_goat.spawn_max_height_goat") or 5000
+
 mobs:spawn({
 	name = "mobs_mr_goat:goat",
-	nodes = {"default:dirt_with_grass", "ethereal:green_dirt_top"},
-	min_light = 10,
-	chance = 300000,
-	min_height = l_spawn_elevation_min,
-	max_height = 5000,
+	nodes = l_spawn_on_goat,
+	neighbors = l_spawn_near_goat,
+	min_light = l_spawn_min_light_goat,
+	max_light = l_spawn_max_light_goat,
+	chance = l_spawn_chance_goat,
+	interval = l_spawn_interval_goat,
+	active_object_count = l_spawn_active_object_count_goat,
+	min_height = l_spawn_min_height_goat,
+	max_height = l_spawn_max_height_goat,
 	day_toggle = true,
 })
+end
 mobs:register_egg("mobs_mr_goat:goat", "Goat", "default_grass.png", 1)
 
 -- bucket of goat milk

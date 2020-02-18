@@ -63,19 +63,43 @@ mobs:register_mob("mobs_giraffe:jeraf", {
 	end
 })
 
-local l_spawn_elevation_min = minetest.setting_get("water_level")
-if l_spawn_elevation_min then
-	l_spawn_elevation_min = l_spawn_elevation_min + 1
-else
-	l_spawn_elevation_min = 1
+local l_spawn_enabled_giraffe = minetest.settings:get_bool("mobs_giraffe.spawn_enabled_giraffe", true)
+if l_spawn_enabled_giraffe then
+
+    
+local function CSVtoTable(str) --[[
+    parses comma separated string into an ordered table of strings
+    whitespace will be trimmed from strings ]]
+    if str == nil then return nil end
+    local ret = {}
+    for item in string.gmatch( str, "([^,%s]+)" ) do table.insert(ret, item) end
+    if table.getn(ret) == 0 then return nil end
+    return ret
 end
+
+local water_level = minetest.setting_get("water_level") or 0
+local l_spawn_on_giraffe = CSVtoTable(minetest.settings:get("mobs_giraffe.spawn_on_giraffe")) or {"default:sand", "default:desert_sand", "default:dirt_with_dry_grass"}
+local l_spawn_near_giraffe = CSVtoTable(minetest.settings:get("mobs_giraffe.spawn_near_giraffe")) or nil
+local l_spawn_min_light_giraffe = minetest.settings:get("mobs_giraffe.spawn_min_light_giraffe") or 10
+local l_spawn_max_light_giraffe = minetest.settings:get("mobs_giraffe.spawn_max_light_giraffe") or nil
+local l_spawn_interval_giraffe = minetest.settings:get("mobs_giraffe.spawn_interval_giraffe") or nil
+local l_spawn_chance_giraffe = minetest.settings:get("mobs_giraffe.spawn_chance_giraffe") or 300000
+local l_spawn_active_object_count_giraffe = minetest.settings:get("mobs_giraffe.spawn_active_object_count_giraffe") or nil
+local l_spawn_min_height_giraffe = minetest.settings:get("mobs_giraffe.spawn_min_height_giraffe") or water_level + 1
+local l_spawn_max_height_giraffe = minetest.settings:get("mobs_giraffe.spawn_max_height_giraffe") or 5000
+
 mobs:spawn({
 	name = "mobs_giraffe:jeraf",
-	nodes = {"default:sand", "default:desert_sand", "default:dirt_with_dry_grass"},
-	min_light = 10,
-	chance = 300000,
-	min_height = l_spawn_elevation_min,
-	max_height = 5000,
+	nodes = l_spawn_on_giraffe,
+	neighbors = l_spawn_near_giraffe,
+	min_light = l_spawn_min_light_giraffe,
+	max_light = l_spawn_max_light_giraffe,
+	chance = l_spawn_chance_giraffe,
+	interval = l_spawn_interval_giraffe,
+	active_object_count = l_spawn_active_object_count_giraffe,
+	min_height = l_spawn_min_height_giraffe,
+	max_height = l_spawn_max_height_giraffe,
 	day_toggle = true,
 })
+end
 mobs:register_egg("mobs_giraffe:jeraf", "Giraffe", "wool_yellow.png", 1)
